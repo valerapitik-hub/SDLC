@@ -1,0 +1,20 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=14, pad=0.3, bgcolor="white"]; node [fontname="DejaVu Sans", fontsize=11, shape=plain]; edge [fontname="DejaVu Sans", fontsize=10, color="#A80036"];
+rankdir=LR; nodesep=0.5; ranksep=1.2; 
+subgraph cluster_seat { label=<<I>«state def»</I> <B>SeatLifecycle</B>>; style="rounded"; color="#A80036"; fontsize=12;
+i1 [shape=circle, style=filled, fillcolor=black, label="", width=0.2];
+free [shape=box, style="rounded,filled", fillcolor="#FEFECE", color="#A80036", label=<<B>Свободно</B>>, margin="0.25,0.15"];
+res [shape=box, style="rounded,filled", fillcolor="#FEFECE", color="#A80036", label=<<B>Забронировано</B><BR/><FONT POINT-SIZE="9">entry / запуск таймера 10 мин</FONT>>, margin="0.25,0.15"];
+sold [shape=box, style="rounded,filled", fillcolor="#FEFECE", color="#A80036", label=<<B>Продано</B>>, margin="0.25,0.15"];
+i1 -> free;
+free -> res [label="AddToCart\n[место свободно]"];
+res -> free [label="after 10 мин\nRemoveFromCart\nAdminCancel", constraint=false, tailport=n, headport=n];
+res -> sold [label="PaymentConfirmed\n[бронь действует]"];
+}
+subgraph cluster_ticket { label=<<I>«state def»</I> <B>TicketLifecycle</B> <FONT POINT-SIZE="10">(билет создаётся, когда место становится «Продано»)</FONT>>; style="rounded"; color="#A80036"; fontsize=12;
+i2 [shape=circle, style=filled, fillcolor=black, label="", width=0.2];
+iss [shape=box, style="rounded,filled", fillcolor="#FEFECE", color="#A80036", label=<<B>Выдан</B><BR/><FONT POINT-SIZE="9">entry / QR + письмо<BR/>ScanInvalid / «Недействителен»</FONT>>, margin="0.25,0.15"];
+used [shape=box, style="rounded,filled", fillcolor="#FEFECE", color="#A80036", label=<<B>Использован</B><BR/><FONT POINT-SIZE="9">Scan / «Уже использован»</FONT>>, margin="0.25,0.15"];
+i2 -> iss;
+ iss -> used [label="ScanValid\n[подпись верна]"];
+}
+}
